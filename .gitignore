@@ -1,0 +1,29 @@
+*.iml
+.gradle/
+.kotlin/
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild
+.cxx
+*.keystore
+!app/debug.keystore
+
+# APKs are built by CI and published on the releases page, never committed.
+*.apk
+
+# Model files are ~1 GB and ship as a release asset.
+*.litertlm
+*.safetensors
+
+# Working notes and review data stay local.
+HANDOFF.md
+corpus/pilot-review-sample.md
+corpus/pilot-data/
+
+# Python
+__pycache__/
+*.pyc
+.ruff_cache/

@@ -1,0 +1,28 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Head -->
+    <path
+        android:fillColor="#8CC152"
+        android:pathData="M54,32c-9,0 -15,7 -15,16c0,10 6,20 15,20s15,-10 15,-20C69,39 63,32 54,32z" />
+    <!-- Ears -->
+    <path
+        android:fillColor="#7CB342"
+        android:pathData="M40,42L22,32l14,18z" />
+    <path
+        android:fillColor="#7CB342"
+        android:pathData="M68,42L86,32L72,50z" />
+    <!-- Eyes -->
+    <path
+        android:fillColor="#0E1A12"
+        android:pathData="M48,46m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0" />
+    <path
+        android:fillColor="#0E1A12"
+        android:pathData="M60,46m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0" />
+    <!-- Robe -->
+    <path
+        android:fillColor="#6D5A3F"
+        android:pathData="M54,68c-10,0 -18,6 -20,14h40C72,74 64,68 54,68z" />
+</vector>

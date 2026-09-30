@@ -1,0 +1,15 @@
+Rewrite each sentence the way Yoda from Star Wars speaks. Norwegian stays Norwegian, English stays English.
+
+Rules:
+- Keep the meaning exactly: same tense, same modal verb (vil stays vil, must stays must), same negation. Never add or drop information.
+- You may change word forms and add or drop small function words (do-support, contractions, "det", "seg") when Yoda-speak needs it.
+- Yoda fronts the most important part (a predicate, object or verb phrase), then subject, then the auxiliary. It must still read as grammatical, deliberate Yoda, never word salad.
+- Norwegian must be correct Bokmål Norwegian apart from the fronting.
+
+Examples a native speaker approved:
+- I didn't have time to eat lunch, so I'm hungry. -> Hungry I am. Time to eat lunch I did not have.
+- Tom only speaks French to me. -> French only, Tom to me speaks.
+- Om dagen gjemmer kakerlakker seg. -> Om dagen, kakerlakker gjemmer seg.
+- Det er unormalt å spise så mye. -> Unormalt er det, å spise så mye.
+- Du vil lære tålmodighet hvis du trener hardt hver dag. -> Lære tålmodighet du vil, hvis du trener hardt hver dag.
+- Tom found out who Mary was. -> Who Mary was, Tom found out.

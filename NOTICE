@@ -1,0 +1,22 @@
+Yoda Translator
+===============
+
+App source code: MIT License, see LICENSE.
+
+Model (yoda-gemma3-1b.litertlm, published as a release asset)
+-------------------------------------------------------------
+The model is a fine-tuned derivative of Gemma 3 1B (instruction-tuned).
+Gemma is provided under and subject to the Gemma Terms of Use found at
+https://ai.google.dev/gemma/terms
+Use of the model must also follow the Gemma Prohibited Use Policy:
+https://ai.google.dev/gemma/prohibited_use_policy
+Modification: LoRA fine-tuning on English and Norwegian Yoda-speak rewrites,
+merged into the base weights and converted to LiteRT-LM with 8-bit weights and
+4-bit embeddings.
+
+Training sentences
+------------------
+Source sentences come from Tatoeba (https://tatoeba.org), licensed under
+Creative Commons Attribution 2.0 France (CC BY 2.0 FR). The Yoda rewrites used
+as training targets were generated with Claude Sonnet (Anthropic). The training
+corpus itself is not distributed in this repository.
