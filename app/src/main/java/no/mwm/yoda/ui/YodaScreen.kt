@@ -141,6 +141,8 @@ fun YodaScreen(
     val context = LocalContext.current
     val sounds = remember { YodaSounds(context) }
     DisposableEffect(sounds) { onDispose { sounds.release() } }
+    val voice = remember { YodaVoice(context) }
+    DisposableEffect(voice) { onDispose { voice.stop() } }
 
     val clipboard = LocalClipboardManager.current
     val snackbar = remember { SnackbarHostState() }
@@ -233,7 +235,10 @@ fun YodaScreen(
                 speakerLabel = if (modelReady && m != null) "Yoda model" else "Rule engine",
                 thinking = modelReady && modelBusy,
                 onCopy = { spoken?.let(copy) },
-                sounds = sounds
+                // With the model loaded, Yoda waits for its answer instead of voicing the rule engine's first.
+                answerFinal = !(modelReady && m == null),
+                sounds = sounds,
+                voice = voice
             )
             m?.notes?.forEach { note ->
                 Text(
@@ -341,7 +346,9 @@ private fun Stage(
     speakerLabel: String,
     thinking: Boolean,
     onCopy: () -> Unit,
-    sounds: YodaSounds
+    answerFinal: Boolean,
+    sounds: YodaSounds,
+    voice: YodaVoice
 ) {
     val stage = if (isSystemInDarkTheme()) DarkStage else LightStage
 
@@ -361,6 +368,9 @@ private fun Stage(
     // A film clip is playing: a murmur, his laugh, or a quote with its words in [caption].
     var voicing by remember { mutableStateOf(false) }
     var humming by remember { mutableStateOf(false) }
+    var speaking by remember { mutableStateOf(false) }
+    var voiceNote by remember { mutableStateOf<String?>(null) }
+    var replays by remember { mutableIntStateOf(0) }
     var caption by remember { mutableStateOf<String?>(null) }
     var muted by remember { mutableStateOf(sounds.muted) }
     val scope = rememberCoroutineScope()
@@ -368,8 +378,8 @@ private fun Stage(
 
     // While nothing else is happening, he hums or laughs to himself every 12 to 25 seconds.
     // The loop only runs while the app is on screen.
-    LaunchedEffect(talking, voicing, muted) {
-        if (talking || voicing || muted) return@LaunchedEffect
+    LaunchedEffect(talking, voicing, speaking, muted) {
+        if (talking || voicing || speaking || muted) return@LaunchedEffect
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             while (true) {
                 delay(Random.nextLong(12_000, 25_000))
@@ -388,6 +398,25 @@ private fun Stage(
     // He hums once as he starts to answer.
     LaunchedEffect(editing) {
         if (!editing && spoken != null) sounds.play(sounds.murmurs.random())
+    }
+    // Then he says his answer out loud, fetched through the voice relay.
+    LaunchedEffect(spoken, editing, answerFinal, muted, replays) {
+        voiceNote = null
+        val line = spoken
+        if (editing || line == null || !answerFinal || muted) {
+            voice.stop()
+            return@LaunchedEffect
+        }
+        try {
+            val file = voice.fetch(line)
+            sounds.stop()
+            speaking = true
+            voice.play(file)
+        } catch (e: YodaVoice.VoiceError) {
+            voiceNote = e.message
+        } finally {
+            speaking = false
+        }
     }
     var lastQuote by remember { mutableStateOf<YodaClip?>(null) }
     val sayQuote: () -> Unit = {
@@ -465,11 +494,12 @@ private fun Stage(
                 onSpeak = onSpeak,
                 spoken = spoken,
                 shown = shown,
-                speakerLabel = speakerLabel,
+                speakerLabel = voiceNote ?: speakerLabel,
                 thinking = thinking,
-                onCopy = onCopy
+                onCopy = onCopy,
+                onReplay = if (muted) null else ({ replays++ })
             )
-            YodaFigure(talking || voicing || humming, caption, onTap = sayQuote)
+            YodaFigure(talking || voicing || humming || speaking, caption, onTap = sayQuote)
         }
     }
 }
@@ -537,7 +567,8 @@ private fun SpeechBubble(
     shown: Int,
     speakerLabel: String,
     thinking: Boolean,
-    onCopy: () -> Unit
+    onCopy: () -> Unit,
+    onReplay: (() -> Unit)?
 ) {
     LaunchedEffect(editing, focusOnEdit) {
         if (editing && focusOnEdit) focus.requestFocus()
@@ -642,6 +673,15 @@ private fun SpeechBubble(
                         color = BubbleHint
                     )
                     Spacer(Modifier.weight(1f))
+                    if (onReplay != null) {
+                        IconButton(onClick = onReplay) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.VolumeUp,
+                                contentDescription = "Hear it again",
+                                tint = BubbleHint
+                            )
+                        }
+                    }
                     IconButton(onClick = onCopy) {
                         Icon(Icons.Default.ContentCopy, contentDescription = "Copy", tint = BubbleHint)
                     }

@@ -1,0 +1,19 @@
+[Unit]
+Description=Yoda app text-to-speech relay (Fish Audio)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/yoda-tts/yoda_tts_relay.py
+EnvironmentFile=/etc/yoda-tts.env
+DynamicUser=yes
+StateDirectory=yoda-tts
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

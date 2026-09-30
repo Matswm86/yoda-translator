@@ -42,7 +42,7 @@ same debug key, so updates install over the old version and keep the model.
   **Speak**; he answers in the same bubble, letter by letter, nodding as he
   talks. Tap the bubble to change what you said.
 - **His own voice.** When idle, Yoda hums or laughs to himself every 12 to 25
-  seconds, and he hums as he starts to answer. Tap him to hear one of his film
+  seconds, and he says his answer out loud after tapping Speak. Tap him to hear one of his film
   lines, with the words shown below him. The speaker button at the top mutes him.
 - **Two engines, side by side.** The bubble shows the model's answer once it is
   ready. The rule engine's version sits below it for comparison.
@@ -51,8 +51,10 @@ same debug key, so updates install over the old version and keep the model.
   (`didn't` → `did not`).
 - **Share → Yoda** and a **Yoda** entry in the text-selection menu, so any
   sentence in any app can be sent straight in.
-- **No network access at all.** The app does not hold the internet permission.
-  Translation runs on the phone and the model is imported from your own storage.
+- **Translation stays on the phone.** The only network use is Yoda's voice: the
+  answer's text goes to a relay at `yoda.mwmai.no`, which asks Fish Audio for the
+  audio. The relay keeps the API key, so the app holds none. Each sentence is
+  cached on the phone, and the speaker button turns the voice off.
 
 ## How it was built
 
