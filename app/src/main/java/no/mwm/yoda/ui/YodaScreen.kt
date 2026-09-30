@@ -33,6 +33,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChip
@@ -56,6 +58,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -78,6 +81,8 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -94,6 +99,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -105,6 +112,7 @@ import no.mwm.yoda.engine.TranslationEngine
 import no.mwm.yoda.engine.TranslationResult
 import no.mwm.yoda.engine.YodaStyle
 import no.mwm.yoda.engine.llm.OnDeviceModelEngine
+import kotlin.random.Random
 
 /** Null means "detect from the text". */
 private val LANG_CHOICES: List<Lang?> = listOf(null, Lang.NO, Lang.EN)
@@ -129,6 +137,10 @@ fun YodaScreen(
         if (!compareAll || input.isBlank()) emptyList()
         else YodaStyle.entries.map { it to engine.translate(input, effectiveLang, it) }
     }
+
+    val context = LocalContext.current
+    val sounds = remember { YodaSounds(context) }
+    DisposableEffect(sounds) { onDispose { sounds.release() } }
 
     val clipboard = LocalClipboardManager.current
     val snackbar = remember { SnackbarHostState() }
@@ -220,7 +232,8 @@ fun YodaScreen(
                 spoken = spoken,
                 speakerLabel = if (modelReady && m != null) "Yoda model" else "Rule engine",
                 thinking = modelReady && modelBusy,
-                onCopy = { spoken?.let(copy) }
+                onCopy = { spoken?.let(copy) },
+                sounds = sounds
             )
             m?.notes?.forEach { note ->
                 Text(
@@ -327,7 +340,8 @@ private fun Stage(
     spoken: String?,
     speakerLabel: String,
     thinking: Boolean,
-    onCopy: () -> Unit
+    onCopy: () -> Unit,
+    sounds: YodaSounds
 ) {
     val stage = if (isSystemInDarkTheme()) DarkStage else LightStage
 
@@ -343,6 +357,54 @@ private fun Stage(
         }
     }
     val talking = !editing && spoken != null && shown < spoken.length
+
+    // A film clip is playing: a murmur, his laugh, or a quote with its words in [caption].
+    var voicing by remember { mutableStateOf(false) }
+    var humming by remember { mutableStateOf(false) }
+    var caption by remember { mutableStateOf<String?>(null) }
+    var muted by remember { mutableStateOf(sounds.muted) }
+    val scope = rememberCoroutineScope()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    // While nothing else is happening, he hums or laughs to himself every 12 to 25 seconds.
+    // The loop only runs while the app is on screen.
+    LaunchedEffect(talking, voicing, muted) {
+        if (talking || voicing || muted) return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            while (true) {
+                delay(Random.nextLong(12_000, 25_000))
+                val clip = sounds.idle.random()
+                if (sounds.play(clip)) {
+                    humming = true
+                    try {
+                        delay(clip.millis)
+                    } finally {
+                        humming = false
+                    }
+                }
+            }
+        }
+    }
+    // He hums once as he starts to answer.
+    LaunchedEffect(editing) {
+        if (!editing && spoken != null) sounds.play(sounds.murmurs.random())
+    }
+    var lastQuote by remember { mutableStateOf<YodaClip?>(null) }
+    val sayQuote: () -> Unit = {
+        val clip = (sounds.quotes - setOfNotNull(lastQuote)).random()
+        lastQuote = clip
+        if (sounds.play(clip)) {
+            scope.launch {
+                voicing = true
+                caption = clip.text
+                delay(clip.millis + 400)
+                if (caption == clip.text) {
+                    caption = null
+                    voicing = false
+                }
+            }
+        }
+    }
 
     Box(
         Modifier
@@ -377,6 +439,20 @@ private fun Stage(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                IconButton(onClick = {
+                    muted = !muted
+                    sounds.muted = muted
+                    if (muted) {
+                        caption = null
+                        voicing = false
+                    }
+                }) {
+                    Icon(
+                        if (muted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                        contentDescription = if (muted) "Unmute Yoda" else "Mute Yoda",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
             Spacer(Modifier.height(12.dp))
             SpeechBubble(
@@ -393,13 +469,14 @@ private fun Stage(
                 thinking = thinking,
                 onCopy = onCopy
             )
-            YodaFigure(talking)
+            YodaFigure(talking || voicing || humming, caption, onTap = sayQuote)
         }
     }
 }
 
+/** Yoda himself. Tapping him plays one of his film lines, shown in [caption] while he says it. */
 @Composable
-private fun YodaFigure(talking: Boolean) {
+private fun YodaFigure(talking: Boolean, caption: String?, onTap: () -> Unit) {
     val motion = rememberInfiniteTransition(label = "yoda")
     val breathe by motion.animateFloat(
         initialValue = 0f,
@@ -414,20 +491,37 @@ private fun YodaFigure(talking: Boolean) {
         label = "nod"
     )
     val talk by animateFloatAsState(if (talking) 1f else 0f, label = "talk")
-    Image(
-        painter = painterResource(R.drawable.yoda),
-        contentDescription = "Master Yoda",
-        contentScale = ContentScale.Fit,
-        modifier = Modifier
-            .height(280.dp)
-            .fillMaxWidth()
-            .graphicsLayer {
-                transformOrigin = TransformOrigin(0.5f, 1f)
-                translationY = -breathe * 5.dp.toPx() + nod * talk * 2.dp.toPx()
-                scaleY = 1f + breathe * 0.012f
-                rotationZ = nod * talk * 1.2f
-            }
-    )
+    Box(contentAlignment = Alignment.BottomCenter) {
+        Image(
+            painter = painterResource(R.drawable.yoda),
+            contentDescription = "Master Yoda. Tap him to hear him speak.",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .height(280.dp)
+                .fillMaxWidth()
+                .clickable(onClick = onTap)
+                .graphicsLayer {
+                    transformOrigin = TransformOrigin(0.5f, 1f)
+                    translationY = -breathe * 5.dp.toPx() + nod * talk * 2.dp.toPx()
+                    scaleY = 1f + breathe * 0.012f
+                    rotationZ = nod * talk * 1.2f
+                }
+        )
+        if (caption != null) {
+            Text(
+                caption,
+                fontFamily = FontFamily.Serif,
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp, bottom = 20.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.Black.copy(alpha = 0.55f))
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+            )
+        }
+    }
 }
 
 @Composable

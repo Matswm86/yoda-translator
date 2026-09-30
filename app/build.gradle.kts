@@ -12,8 +12,8 @@ android {
         applicationId = "no.mwm.yoda"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
         // Phones only: skips the x86_64 copy of the LiteRT-LM native library (~25 MB).
         ndk { abiFilters += "arm64-v8a" }
     }

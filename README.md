@@ -41,6 +41,9 @@ same debug key, so updates install over the old version and keep the model.
 - **Yoda says it.** You type into the speech bubble above Yoda and tap
   **Speak**; he answers in the same bubble, letter by letter, nodding as he
   talks. Tap the bubble to change what you said.
+- **His own voice.** When idle, Yoda hums or laughs to himself every 12 to 25
+  seconds, and he hums as he starts to answer. Tap him to hear one of his film
+  lines, with the words shown below him. The speaker button at the top mutes him.
 - **Two engines, side by side.** The bubble shows the model's answer once it is
   ready. The rule engine's version sits below it for comparison.
 - **Meaning stays put.** Tense, modal verbs (`vil`, `must`) and negation come
