@@ -373,7 +373,7 @@ private fun Stage(
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             while (true) {
                 delay(Random.nextLong(12_000, 25_000))
-                val clip = sounds.idle.random()
+                val clip = sounds.nextIdle()
                 if (sounds.play(clip)) {
                     humming = true
                     try {

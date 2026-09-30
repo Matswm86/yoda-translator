@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.SoundPool
 import androidx.annotation.RawRes
 import no.mwm.yoda.R
+import kotlin.random.Random
 
 /** One of Yoda's film recordings. [text] is shown while a quote plays; murmurs have none. */
 class YodaClip(@RawRes val res: Int, val millis: Long, val text: String? = null)
@@ -20,7 +21,18 @@ class YodaSounds(context: Context) {
         YodaClip(R.raw.yoda_hm_1, 2150),
         YodaClip(R.raw.yoda_hm_2, 1620),
     )
-    val idle = murmurs + YodaClip(R.raw.yoda_laugh_1, 960)
+    val laughs = listOf(
+        YodaClip(R.raw.yoda_laugh_1, 960),
+        YodaClip(R.raw.yoda_laugh_2, 2400),
+        YodaClip(R.raw.yoda_laugh_3, 1790),
+        YodaClip(R.raw.yoda_laugh_4, 3500),
+        YodaClip(R.raw.yoda_laugh_5, 6500),
+        YodaClip(R.raw.yoda_laugh_6, 2260),
+    )
+    private val idle = murmurs + laughs
+
+    /** An idle sound: a hum half the time, a laugh the other half. */
+    fun nextIdle(): YodaClip = if (Random.nextBoolean()) murmurs.random() else laughs.random()
     val quotes = listOf(
         YodaClip(R.raw.yoda_q_900, 3870, "When nine hundred years old you reach, look as good you will not."),
         YodaClip(R.raw.yoda_q_size, 5570, "Size matters not. Look at me. Judge me by my size, do you?"),
