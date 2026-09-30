@@ -1,5 +1,7 @@
 # Yoda Translator
 
+![Master Yoda saying "Eldre enn far er mor." in a speech bubble](art/readme-hero.png)
+
 Type English or Norwegian, get it back the way Yoda would say it. It runs on the
 phone, offline: a small language model fine-tuned for exactly this job, with a
 hand-written rule engine underneath it as a fallback.
@@ -36,8 +38,11 @@ same debug key, so updates install over the old version and keep the model.
 
 ## What it does
 
-- **Two engines, side by side.** The model's line appears a moment after you
-  stop typing. The rule engine answers instantly underneath it.
+- **Yoda says it.** You type into the speech bubble above Yoda and tap
+  **Speak**; he answers in the same bubble, letter by letter, nodding as he
+  talks. Tap the bubble to change what you said.
+- **Two engines, side by side.** The bubble shows the model's answer once it is
+  ready. The rule engine's version sits below it for comparison.
 - **Meaning stays put.** Tense, modal verbs (`vil`, `must`) and negation come
   through unchanged. Word forms may bend where Yoda-speak needs it
   (`didn't` → `did not`).
@@ -115,7 +120,9 @@ app/src/main/java/no/mwm/yoda/
   engine/LanguageDetector.kt       English or Norwegian, from function words
   engine/rule/                     tagger, parser, movement rules, renderer
   engine/llm/OnDeviceModelEngine.kt  LiteRT-LM runner and model import
-  ui/                              Compose screen
+  ui/                              Compose screen: Yoda, the speech bubble, settings
+app/src/main/res/drawable-nodpi/yoda.webp  the Yoda image shown in the app
+art/                               Blender render script and the README image
 corpus/                            pool building, teacher distillation, gates
 train/train_lora.py                LoRA fine-tune and held-out evaluation
 ```
@@ -124,4 +131,6 @@ train/train_lora.py                LoRA fine-tune and held-out evaluation
 
 The app code is MIT (see `LICENSE`). The model is a derivative of Gemma and is
 provided under and subject to the Gemma Terms of Use; the training sentences
-come from Tatoeba under CC BY 2.0 FR. Details in `NOTICE`.
+come from Tatoeba under CC BY 2.0 FR. The Yoda images are renders of
+["Master Yoda"](https://sketchfab.com/3d-models/master-yoda-2fb5a943b7b24ac0b195a74d1a3c6c8d)
+by [blazer003](https://sketchfab.com/blazer003), CC BY-NC 4.0. Details in `NOTICE`.

@@ -16,43 +16,60 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 
-private val Swamp = Color(0xFF0E1A12)
-private val SwampSurface = Color(0xFF16241A)
-private val SwampCard = Color(0xFF1D2F22)
-private val Saber = Color(0xFF8CC152)
-private val SaberDim = Color(0xFF6FA03F)
-private val Parchment = Color(0xFFF2F5EC)
-private val Robe = Color(0xFFB89B6E)
+// Dagobah swamp, Yoda's skin, and his burlap robe.
+private val Swamp = Color(0xFF111912)
+private val SwampSurface = Color(0xFF18231A)
+private val SwampCard = Color(0xFF213022)
+private val Skin = Color(0xFFA3B85E)
+private val SkinDeep = Color(0xFF5E7A26)
+private val Robe = Color(0xFFB9A57C)
+private val RobeDeep = Color(0xFF6E5D3E)
+private val Parchment = Color(0xFFF4EEDE)
+
+/** Colours the Material scheme has no slot for: the stage and the speech bubble. */
+data class YodaStage(val top: Color, val bottom: Color, val glow: Color)
+
+val DarkStage = YodaStage(top = Color(0xFF0F1710), bottom = Color(0xFF27361F), glow = Color(0xFF5E8A3A))
+val LightStage = YodaStage(top = Color(0xFFE9EFDC), bottom = Color(0xFFC7D5AA), glow = Color(0xFFF7FBEA))
+val BubbleFill = Parchment
+val BubbleInk = Color(0xFF22261C)
+val BubbleHint = Color(0xFF7A6A4A)
+val BubbleButton = Color(0xFF5E7A26)
 
 private val DarkColors = darkColorScheme(
-    primary = Saber,
+    primary = Skin,
     onPrimary = Swamp,
     primaryContainer = SwampCard,
-    onPrimaryContainer = Saber,
+    onPrimaryContainer = Skin,
     secondary = Robe,
     onSecondary = Swamp,
+    secondaryContainer = Color(0xFF3A3526),
+    onSecondaryContainer = Color(0xFFEADFC4),
     background = Swamp,
     onBackground = Parchment,
     surface = SwampSurface,
     onSurface = Parchment,
     surfaceVariant = SwampCard,
-    onSurfaceVariant = Color(0xFFC3CFBC),
-    outline = Color(0xFF445A49)
+    onSurfaceVariant = Color(0xFFC6CFB8),
+    outline = Color(0xFF465A45)
 )
 
 private val LightColors = lightColorScheme(
-    primary = SaberDim,
+    primary = SkinDeep,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFDDEBC8),
-    onPrimaryContainer = Color(0xFF1B3310),
-    secondary = Color(0xFF7A6544),
-    background = Color(0xFFFBFDF6),
-    onBackground = Color(0xFF191D17),
-    surface = Color(0xFFF3F6EC),
-    onSurface = Color(0xFF191D17),
-    surfaceVariant = Color(0xFFE1E8D8),
-    onSurfaceVariant = Color(0xFF444B41),
-    outline = Color(0xFF757D70)
+    primaryContainer = Color(0xFFDDE8C4),
+    onPrimaryContainer = Color(0xFF1E2F0C),
+    secondary = RobeDeep,
+    onSecondary = Color.White,
+    secondaryContainer = Color(0xFFE6DCC3),
+    onSecondaryContainer = Color(0xFF2E2615),
+    background = Color(0xFFF7F5EC),
+    onBackground = Color(0xFF1B1E16),
+    surface = Color(0xFFEFEDE0),
+    onSurface = Color(0xFF1B1E16),
+    surfaceVariant = Color(0xFFE3E4D2),
+    onSurfaceVariant = Color(0xFF4A4C3E),
+    outline = Color(0xFF7D7F6C)
 )
 
 private val YodaTypography = Typography(

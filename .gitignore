@@ -27,3 +27,7 @@ corpus/pilot-data/
 __pycache__/
 *.pyc
 .ruff_cache/
+
+# Raw Blender renders; art/render_yoda.py regenerates them from the GLB.
+art/yoda_bust.png
+art/yoda_full.png

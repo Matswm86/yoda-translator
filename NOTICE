@@ -20,3 +20,13 @@ Source sentences come from Tatoeba (https://tatoeba.org), licensed under
 Creative Commons Attribution 2.0 France (CC BY 2.0 FR). The Yoda rewrites used
 as training targets were generated with Claude Sonnet (Anthropic). The training
 corpus itself is not distributed in this repository.
+
+Yoda images
+-----------
+app/src/main/res/drawable-nodpi/yoda.webp and art/readme-hero.png are renders
+of "Master Yoda" by blazer003
+(https://sketchfab.com/3d-models/master-yoda-2fb5a943b7b24ac0b195a74d1a3c6c8d),
+licensed under Creative Commons Attribution-NonCommercial 4.0
+(http://creativecommons.org/licenses/by-nc/4.0/). Changes: rendered in Blender
+with new lighting, cropped, and composited onto a new background.
+The 3D model file itself is not distributed in this repository.
