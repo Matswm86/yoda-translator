@@ -2,9 +2,10 @@
 
 ![Master Yoda saying "Eldre enn far er mor." in a speech bubble](art/readme-hero.png)
 
-Type English or Norwegian, get it back the way Yoda would say it. It runs on the
-phone, offline: a small language model fine-tuned for exactly this job, with a
-hand-written rule engine underneath it as a fallback.
+Type English or Norwegian, get it back the way Yoda would say it. The
+translation runs on the phone, offline: a small language model fine-tuned for
+exactly this job, with a hand-written rule engine underneath it as a fallback.
+Yoda then says the answer out loud; that part needs a network connection.
 
 | You type | The model says |
 |---|---|
@@ -42,8 +43,13 @@ same debug key, so updates install over the old version and keep the model.
   **Speak**; he answers in the same bubble, letter by letter, nodding as he
   talks. Tap the bubble to change what you said.
 - **His own voice.** When idle, Yoda hums or laughs to himself every 12 to 25
-  seconds, and he says his answer out loud after tapping Speak. Tap him to hear one of his film
-  lines, with the words shown below him. The speaker button at the top mutes him.
+  seconds, and he says his answer out loud after tapping Speak. Tap him to hear
+  one of his film lines, with the words shown as a caption at the bottom of the
+  stage. The speaker button at the top mutes him.
+- **Language and style.** The language is detected from the text, or you can
+  force Norwegian or English. The rule engine has three styles (Classic Yoda,
+  Grammatical, Full inversion) that you can compare side by side; the model has
+  one.
 - **Two engines, side by side.** The bubble shows the model's answer once it is
   ready. The rule engine's version sits below it for comparison.
 - **Meaning stays put.** Tense, modal verbs (`vil`, `must`) and negation come
@@ -93,11 +99,17 @@ are not errors.
 [LiteRT-LM](https://developers.google.com/edge/litert-lm/android). On a desktop
 CPU the converted model matched the PyTorch model on 11 of 12 test sentences.
 
+## Status
+
+Version 0.6.0. Builds are debug-signed and published from `main` as a rolling
+pre-release; there is no tagged release yet. Not done: speed and memory on real
+phones are untested (see Known limits).
+
 ## Known limits
 
 - **Speed and memory on your phone are untested so far.** A 1B model needs
-  well over 1 GB of free memory (the file alone is 1.1 GB); low-memory phones may be slow or fail to
-  load it, in which case the rule engine still answers.
+  well over 1 GB of free memory (the file alone is 1.1 GB); low-memory phones
+  may be slow or fail to load it, in which case the rule engine still answers.
 - **Style is not uniform in Norwegian.** The model mixes verb-second
   (`Opptatt er alle`) and verb-last (`En dømt forbryter, Tom er`), because its
   teacher did.
@@ -125,11 +137,14 @@ app/src/main/java/no/mwm/yoda/
   engine/LanguageDetector.kt       English or Norwegian, from function words
   engine/rule/                     tagger, parser, movement rules, renderer
   engine/llm/OnDeviceModelEngine.kt  LiteRT-LM runner and model import
-  ui/                              Compose screen: Yoda, the speech bubble, settings
+  ui/                              Compose screen: Yoda, the speech bubble, language
+                                   and style pickers, film clips, voice playback
 app/src/main/res/drawable-nodpi/yoda.webp  the Yoda image shown in the app
+app/src/main/res/raw/              Yoda's film clips: murmurs, laughs, quotes
 art/                               Blender render script and the README image
 corpus/                            pool building, teacher distillation, gates
 train/train_lora.py                LoRA fine-tune and held-out evaluation
+server/                            text-to-speech relay (Fish Audio) and its systemd unit
 ```
 
 ## Licences
