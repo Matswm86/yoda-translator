@@ -19,7 +19,7 @@ These are real outputs of the phone model on sentences it never saw in training.
 
 ## 📲 Download
 
-**[⬇ Latest APK](https://github.com/Matswm86/yoda-translator/releases/download/latest/yoda-translator-9db3fa5.apk)**
+**[⬇ Latest APK](https://github.com/Matswm86/yoda-translator/releases/download/latest/yoda-translator-5b007d3.apk)**
 &nbsp;·&nbsp; [all builds](https://github.com/Matswm86/yoda-translator/releases)
 
 **[⬇ Yoda model, 1.1 GB](https://github.com/Matswm86/yoda-translator/releases/download/model-v1/yoda-gemma3-1b.litertlm)**
